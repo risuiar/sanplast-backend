@@ -5,15 +5,49 @@ namespace App\Http\Controllers;
 use App\Models\Productos;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Exception;
+use Illuminate\Support\Facades\Log;
+use App\Http\Requests\ProductosFormRequest;
 
 class ProductosController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('productos/index');
+        $productsQuery = Productos::query();
+        $totalCount = $productsQuery->count();
+
+        $allProducts = $productsQuery->latest()->get()->map(fn($producto) => [
+            'id'                           => $producto->id,
+            'nombre'                         => $producto->nombre,
+            'modelo'                  => $producto->modelo,
+            'stock'                        => $producto->stock,
+            'file'               => $producto->file,
+        ]);
+        $filteredCount = $productsQuery->count();
+        $perPage = (int) ($request->perPage ?? 10);
+
+        $productos = [
+            'data'     => $allProducts,
+            'total'    => $filteredCount,
+            'per_page' => $perPage,
+            'from'     => 1,
+            'to'       => $filteredCount,
+            'links'    => [],
+        ];
+
+        return Inertia::render('productos/index', [
+            'productos' => $productos,
+            'filters'  => [
+                'search' => '',
+                'trashed' => false,
+            ],
+            'totalCount' => $totalCount,
+            'perPage' => 10,
+            'currentPage' => 1,
+        ]);
     }
 
     /**
@@ -26,10 +60,55 @@ class ProductosController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * @param ProductosFormRequest $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(ProductosFormRequest $request)
     {
-        //
+        try {
+            $producto_file = null;
+            $filename = null;
+
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                $filename = $file->getClientOriginalName();
+                $producto_file = $file->store('productos', 'public');
+            }
+            $productos = Productos::create([
+                'nombre' => $request->nombre,
+                'modelo' => $request->modelo,
+                'descripcion' => $request->descripcion,
+                'capacidad_litros' => $request->capacidad_litros,
+                'altura_cm' => $request->altura_cm,
+                'diametro_cm' => $request->diametro_cm,
+                'material' => $request->material,
+                'color' => $request->color,
+                'precio_venta' => $request->precio_venta,
+                'costo_fabricacion' => $request->costo_fabricacion,
+                'stock' => $request->stock,
+                'peso_kg' => $request->peso_kg,
+                'presion_maxima_bar' => $request->presion_maxima_bar,
+                'espesor_pared_mm' => $request->espesor_pared_mm,
+                'revestimiento_interno' => $request->revestimiento_interno,
+                'garantia_anios' => $request->garantia_anios,
+                'temperatura_maxima_c' => $request->temperatura_maxima_c,
+                'tipo_instalacion' => $request->tipo_instalacion,
+                'conexiones_incluidas' => $request->conexiones_incluidas,
+                'certificaciones' => $request->certificaciones,
+                'resistencia_uv' => $request->resistencia_uv,
+                'uso_recomendado' => $request->uso_recomendado,
+                'activo' => $request->activo,
+                'file' => $filename,
+            ]);
+
+            if ($productos) {
+                return redirect()->route('productos.index')->with('success', 'Producto creado exitosamente.');
+            }
+            return redirect()->back()->with('error', 'Error al crear el producto.');
+
+            } catch (Exception $e) {
+                    Log::error('Error al crear el producto: ' . $e->getMessage());
+                }
     }
 
     /**

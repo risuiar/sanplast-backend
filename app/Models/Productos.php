@@ -9,6 +9,7 @@ class Productos extends Model
     protected $fillable = [
         'nombre',
         'modelo',
+        'descripcion',
         'capacidad_litros',
         'altura_cm',
         'diametro_cm',
@@ -28,6 +29,7 @@ class Productos extends Model
         'certificaciones',
         'resistencia_uv',
         'uso_recomendado',
-        'activo'
+        'activo',
+        'file'
     ];
 }

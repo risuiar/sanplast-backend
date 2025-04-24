@@ -1,3 +1,4 @@
+import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,8 +16,30 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function ProductosForm() {
-    useForm();
+    const { data, setData, post, processing, errors, reset } = useForm({
+        nombre: '',
+        modelo: '',
+        descripcion: '',
+        capacidad_litros: 0,
+        precio_venta: 0,
+        stock: 0,
+        resistencia_uv: 0,
+        activo: false,
+        file: null as File | null,
+    });
 
+    const submit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        post(route('productos.store'), {
+            onSuccess: () => reset(),
+        });
+    };
+
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            setData('file', e.target.files[0]);
+        }
+    };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Productos" />
@@ -34,23 +57,65 @@ export default function ProductosForm() {
                     <CardHeader>
                         <CardTitle>Crear Producto</CardTitle>
                         <CardContent>
-                            <form className="flex flex-col gap-4 pt-4" autoComplete="off">
+                            <form onSubmit={submit} className="flex flex-col gap-4 pt-4" autoComplete="off">
                                 <div className="grid gap-6">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="name">Nombre</Label>
-                                        <Input id="name" name="name" type="text" placeholder="Nombre del producto" required autoFocus tabIndex={0} />
+                                        <Label htmlFor="nombre">Nombre</Label>
+                                        <Input
+                                            onChange={(e) => setData('nombre', e.target.value)}
+                                            value={data.nombre}
+                                            id="v"
+                                            name="nombre"
+                                            type="text"
+                                            placeholder="Nombre del producto"
+                                            autoFocus
+                                            tabIndex={0}
+                                        />
+                                        <InputError message={errors.nombre} />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="name">Modelo</Label>
-                                        <Input id="modelo" name="modelo" placeholder="Modelo del producto" required autoFocus tabIndex={1} />
+                                        <Label htmlFor="modelo">Modelo</Label>
+                                        <Input
+                                            onChange={(e) => setData('modelo', e.target.value)}
+                                            value={data.modelo}
+                                            id="modelo"
+                                            name="modelo"
+                                            placeholder="Modelo del producto"
+                                            autoFocus
+                                            tabIndex={1}
+                                        />
+                                        <InputError message={errors.modelo} />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="name">Descripción</Label>
-                                        <Textarea id="modelo" name="modelo" placeholder="Modelo del producto" required autoFocus tabIndex={2} />
+                                        <Label htmlFor="capacidad_litros">Capacidad litros</Label>
+                                        <Input
+                                            onChange={(e) => setData('capacidad_litros', Number(e.target.value))}
+                                            value={data.capacidad_litros}
+                                            id="capacidad_litros"
+                                            name="capacidad_litros"
+                                            placeholder="Capacidad litros"
+                                            autoFocus
+                                            tabIndex={2}
+                                        />
+                                        <InputError message={errors.capacidad_litros} />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="name">Imagen</Label>
-                                        <Input id="imagen" name="imagen" type="file" required autoFocus tabIndex={2} />
+                                        <Label htmlFor="descripcion">Descripción</Label>
+                                        <Textarea
+                                            onChange={(e) => setData('descripcion', e.target.value)}
+                                            value={data.descripcion}
+                                            id="descripcion"
+                                            name="descripcion"
+                                            placeholder="Descripción del producto"
+                                            autoFocus
+                                            tabIndex={2}
+                                        />
+                                        <InputError message={errors.descripcion} />
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="file">Imagen</Label>
+                                        <Input onChange={handleFileUpload} id="file" name="file" type="file" autoFocus tabIndex={2} />
+                                        <InputError message={errors.file} />
                                     </div>
                                     <Button type="submit" className="mt-4 w-fit cursor-pointer" tabIndex={3}>
                                         Guardar Producto
