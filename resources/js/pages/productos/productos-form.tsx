@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { ArrowLeft } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -43,14 +44,14 @@ export default function ProductosForm() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Productos" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl pr-4 pl-4">
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="ml-auto">
                     <Link
                         href={route('productos.index')}
                         as="button"
-                        className="bg-sanplast m-2 w-fit cursor-pointer rounded-lg px-4 py-2 text-sm text-white hover:opacity-90"
+                        className="bg-sanplast flex cursor-pointer items-center rounded-lg px-4 py-2 text-sm text-white hover:opacity-90"
                     >
-                        Volver a Productos
+                        <ArrowLeft className="me-2" /> Volver a Productos
                     </Link>
                 </div>
                 <Card>

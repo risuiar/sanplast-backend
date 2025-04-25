@@ -20,11 +20,13 @@ class ProductosController extends Controller
         $totalCount = $productsQuery->count();
 
         $allProducts = $productsQuery->latest()->get()->map(fn($producto) => [
-            'id'                           => $producto->id,
-            'nombre'                         => $producto->nombre,
-            'modelo'                  => $producto->modelo,
-            'stock'                        => $producto->stock,
-            'file'               => $producto->file,
+            'id'            => $producto->id,
+            'nombre'        => $producto->nombre,
+            'modelo'        => $producto->modelo,
+            'color'         => $producto->color,
+            'stock'         => $producto->stock,
+            'file'          => $producto->file,
+            'created_at'    => $producto->created_at->format('d/m/Y'),
         ]);
         $filteredCount = $productsQuery->count();
         $perPage = (int) ($request->perPage ?? 10);
@@ -98,7 +100,7 @@ class ProductosController extends Controller
                 'resistencia_uv' => $request->resistencia_uv,
                 'uso_recomendado' => $request->uso_recomendado,
                 'activo' => $request->activo,
-                'file' => $filename,
+                'file' => $producto_file,
             ]);
 
             if ($productos) {
