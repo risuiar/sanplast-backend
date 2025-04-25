@@ -23,6 +23,7 @@ class ProductosController extends Controller
             'id'            => $producto->id,
             'nombre'        => $producto->nombre,
             'modelo'        => $producto->modelo,
+            'capacidad_litros' => $producto->capacidad_litros,
             'color'         => $producto->color,
             'stock'         => $producto->stock,
             'file'          => $producto->file,

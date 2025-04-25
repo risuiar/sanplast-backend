@@ -200,13 +200,16 @@ export default function ProductosForm({ producto, isView, isEdit }: { producto: 
                                                 <InputError message={errors.file} />
                                             </>
                                         )}
-                                        {isView ||
-                                            (isEdit && (
-                                                <div className="grid gap-2">
-                                                    <Label htmlFor="featured_image">Imagen actual</Label>
-                                                    <img src={`/${producto.file}`} alt="Imagen" className="h-40 w-50 rounded-lg border" />
-                                                </div>
-                                            ))}
+                                        {(isView || isEdit) && (
+                                            <div className="grid gap-2">
+                                                <Label htmlFor="featured_image">Imagen actual</Label>
+                                                <img
+                                                    src={`/storage/${producto.file}`}
+                                                    alt={producto.nombre}
+                                                    className="h-40 w-50 rounded-lg border object-contain"
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-6">
