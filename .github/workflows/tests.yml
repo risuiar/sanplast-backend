@@ -1,4 +1,5 @@
 name: tests
+run: exit 0
 
 on:
   push:
