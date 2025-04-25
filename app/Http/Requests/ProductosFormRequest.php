@@ -19,7 +19,7 @@ class ProductosFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre' => 'required|string|max:255',
+            'nombre' => 'string|max:255',
             'modelo' => 'string|max:255',
             'descripcion' => 'string|max:1000',
             'capacidad_litros' => 'numeric|min:0',
@@ -49,7 +49,6 @@ class ProductosFormRequest extends FormRequest
     public function messages()
     {
         return [
-            'nombre.required' => 'El campo nombre es obligatorio.',
             'nombre.string' => 'El campo nombre debe ser una cadena de texto.',
             'nombre.max' => 'El campo nombre no puede tener más de 255 caracteres.',
             'modelo.string' => 'El campo modelo debe ser una cadena de texto.',

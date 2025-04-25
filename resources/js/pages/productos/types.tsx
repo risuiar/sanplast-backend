@@ -1,4 +1,4 @@
-interface Producto {
+export interface Producto {
     id: number;
     nombre: string;
     modelo?: string;

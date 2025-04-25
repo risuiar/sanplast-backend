@@ -4,7 +4,7 @@ import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, Tabl
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { CirclePlusIcon, Eye, Pencil, Trash2 } from 'lucide-react';
+import { Check, CirclePlusIcon, Eye, Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { IndexProps } from './types';
 
@@ -63,8 +63,9 @@ export default function Index({ productos, filters, totalCount, filteredCount }:
                                 <TableHead>Capacidad litros</TableHead>
                                 <TableHead>Imagen</TableHead>
                                 <TableHead>Color</TableHead>
-                                <TableHead>Creado</TableHead>
+                                <TableHead>Activo</TableHead>
                                 <TableHead className="text-right">Stock</TableHead>
+                                <TableHead>Creado</TableHead>
                                 <TableHead>Acción</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -81,29 +82,30 @@ export default function Index({ productos, filters, totalCount, filteredCount }:
                                         )}
                                     </TableCell>
                                     <TableCell>{product.color}</TableCell>
-                                    <TableCell>{product.created_at}</TableCell>
+                                    <TableCell>{product.activo ? <Check size={18} color="green" /> : ''}</TableCell>
                                     <TableCell className="text-right">{product.stock}</TableCell>
+                                    <TableCell>{product.created_at}</TableCell>
                                     <TableCell>
                                         <Link
                                             as="button"
                                             className="cursor-pointer rounded-lg bg-sky-600 p-2 text-white hover:opacity-90"
                                             href={route('productos.show', product.id)}
                                         >
-                                            <Eye size={18} />{' '}
+                                            <Eye size={18} />
                                         </Link>
                                         <Link
                                             as="button"
                                             className="ms-2 cursor-pointer rounded-lg bg-blue-600 p-2 text-white hover:opacity-90"
                                             href={route('productos.edit', product.id)}
                                         >
-                                            <Pencil size={18} />{' '}
+                                            <Pencil size={18} />
                                         </Link>
 
                                         <Button
                                             className="ms-2 cursor-pointer rounded-lg bg-red-600 p-2 text-white hover:opacity-90"
                                             onClick={() => {
                                                 if (confirm('Are you sure you want to delete this product?')) {
-                                                    router.delete(route('products.destroy', product.id), {
+                                                    router.delete(route('productos.destroy', product.id), {
                                                         preserveScroll: true,
                                                     });
                                                 }
@@ -117,7 +119,7 @@ export default function Index({ productos, filters, totalCount, filteredCount }:
                         </TableBody>
                         <TableFooter>
                             <TableRow className="bg-sanplast/60">
-                                <TableCell colSpan={8}>Total</TableCell>
+                                <TableCell colSpan={9}>Total</TableCell>
                                 <TableCell className="text-right">59</TableCell>
                             </TableRow>
                         </TableFooter>

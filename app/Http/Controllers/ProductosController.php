@@ -26,6 +26,7 @@ class ProductosController extends Controller
             'color'         => $producto->color,
             'stock'         => $producto->stock,
             'file'          => $producto->file,
+            'activo'        => $producto->activo,
             'created_at'    => $producto->created_at->format('d/m/Y'),
         ]);
         $filteredCount = $productsQuery->count();
@@ -116,32 +117,78 @@ class ProductosController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Productos $productos)
+    public function show(Productos $producto)
     {
-        //
+        return Inertia::render('productos/productos-form', [
+            'producto' => $producto,
+            'isView'  => true,
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Productos $productos)
+    public function edit(Productos $producto)
     {
-        //
+        return Inertia::render('productos/productos-form', [
+            'producto' => $producto,
+            'isEdit'  => true,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Productos $productos)
+    public function update(ProductosFormRequest $request, Productos $producto)
     {
-        //
+        try {
+            if ($producto) {
+                $producto->nombre = $request->nombre;
+                $producto->modelo = $request->modelo;
+                $producto->descripcion = $request->descripcion;
+                $producto->capacidad_litros = $request->capacidad_litros;
+                $producto->altura_cm = $request->altura_cm;
+                $producto->diametro_cm = $request->diametro_cm;
+                $producto->material = $request->material;
+                $producto->color = $request->color;
+                $producto->precio_venta = $request->precio_venta;
+                $producto->costo_fabricacion = $request->costo_fabricacion;
+                $producto->stock = $request->stock;
+                $producto->peso_kg = $request->peso_kg;
+                $producto->presion_maxima_bar = $request->presion_maxima_bar;
+                $producto->espesor_pared_mm = $request->espesor_pared_mm;
+                $producto->revestimiento_interno = $request->revestimiento_interno;
+                $producto->garantia_anios = $request->garantia_anios;
+                $producto->temperatura_maxima_c = $request->temperatura_maxima_c;
+                $producto->tipo_instalacion = $request->tipo_instalacion;
+                $producto->conexiones_incluidas = $request->conexiones_incluidas;
+                $producto->certificaciones = $request->certificaciones;
+                $producto->resistencia_uv = $request->resistencia_uv;
+                $producto->uso_recomendado = $request->uso_recomendado;
+                $producto->activo = $request->activo;
+                if ($request->file('file')) {
+                    $file = $request->file('file');
+                    $producto->file = $file;
+                }
+                $producto->save();
+                return redirect()->route('productos.index')->with('success', 'Producto actualizado exitosamente.');
+            }
+            return redirect()->back()->with('error', 'Error al actualizar el producto.');
+            } catch (Exception $e) {
+                dd($e);//Log::error('Product update failed: ' . $e->getMessage());
+            }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Productos $productos)
+    public function destroy(Productos $producto)
     {
-        //
+        if ($producto) {
+            $producto->delete();
+            return redirect()->route('productos.index')->with('success', 'Producto eliminado exitosamente.');
+        } else {
+            return redirect()->back()->with('error', 'Error al eliminar el producto.');
+        }
     }
 }
