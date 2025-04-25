@@ -14,8 +14,8 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/productos',
     },
 ];
-
-export default function Index({ productos, filters, totalCount, filteredCount }: IndexProps) {
+// , filters, totalCount, filteredCount
+export default function Index({ productos }: IndexProps) {
     const { flash } = usePage<{ flash?: { success?: string; error?: string } }>().props;
     const flashMessage = flash?.success ?? flash?.error;
     const [showAlert, setShowAlert] = useState(!!(flash?.success ?? flash?.error));

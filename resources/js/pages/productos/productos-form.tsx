@@ -200,7 +200,7 @@ export default function ProductosForm({ producto, isView, isEdit }: { producto: 
                                                 <InputError message={errors.file} />
                                             </>
                                         )}
-                                        {(isView || isEdit) && (
+                                        {producto?.file && (isView || isEdit) && (
                                             <div className="grid gap-2">
                                                 <Label htmlFor="featured_image">Imagen actual</Label>
                                                 <img
