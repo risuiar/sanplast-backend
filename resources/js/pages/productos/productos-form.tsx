@@ -26,7 +26,7 @@ export default function ProductosForm({ producto, isView, isEdit }: { producto: 
         capacidad_litros: producto?.capacidad_litros ?? 0,
         altura_cm: producto?.altura_cm ?? 0,
         diametro_cm: producto?.diametro_cm ?? 0,
-        material: producto?.material || '',
+        material: producto?.material ?? '',
         color: producto?.color ?? '',
         precio_venta: producto?.precio_venta ?? 0,
         costo_fabricacion: producto?.costo_fabricacion ?? 0,
@@ -242,7 +242,7 @@ export default function ProductosForm({ producto, isView, isEdit }: { producto: 
                                         <Label htmlFor="costo_fabricacion">Costo Fabricacion</Label>
                                         <Input
                                             onChange={(e) => setData('costo_fabricacion', Number(e.target.value))}
-                                            value={data.diametro_cm}
+                                            value={data.costo_fabricacion}
                                             id="costo_fabricacion"
                                             name="costo_fabricacion"
                                             placeholder="Costo Fabricacion"
@@ -395,7 +395,7 @@ export default function ProductosForm({ producto, isView, isEdit }: { producto: 
                                         <Label htmlFor="resistencia_uv">Resistencia UV</Label>
                                         <Input
                                             onChange={(e) => setData('resistencia_uv', Number(e.target.value))}
-                                            value={data.conexiones_incluidas}
+                                            value={data.resistencia_uv}
                                             id="resistencia_uv"
                                             name="resistencia_uv"
                                             placeholder="Resistencia UV"

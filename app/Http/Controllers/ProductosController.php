@@ -168,14 +168,14 @@ class ProductosController extends Controller
                 $producto->activo = $request->activo;
                 if ($request->file('file')) {
                     $file = $request->file('file');
-                    $producto->file = $file;
+                    $producto->file = $file->store('productos', 'public');
                 }
                 $producto->save();
                 return redirect()->route('productos.index')->with('success', 'Producto actualizado exitosamente.');
             }
             return redirect()->back()->with('error', 'Error al actualizar el producto.');
             } catch (Exception $e) {
-                dd($e);//Log::error('Product update failed: ' . $e->getMessage());
+                Log::error('Product update failed: ' . $e->getMessage());
             }
     }
 
