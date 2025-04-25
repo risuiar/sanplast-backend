@@ -42,7 +42,11 @@ class ProductosFormRequest extends FormRequest
             'resistencia_uv' => 'numeric|min:0',
             'uso_recomendado' => 'max:255',
             'activo' => 'boolean',
-            'file' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'image1' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'image2' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'image3' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'image4' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'image5' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
         ];
     }
 

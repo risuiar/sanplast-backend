@@ -11,13 +11,27 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, LoaderCircle } from 'lucide-react';
 import { Producto } from './types';
 
-export default function ProductosForm({ producto, isView, isEdit }: { producto: Producto; isView?: boolean; isEdit?: boolean }) {
+export default function ProductosForm({
+    producto,
+    isView,
+    isEdit,
+    modifications,
+}: {
+    producto: Producto;
+    isView?: boolean;
+    isEdit?: boolean;
+    modifications: {
+        created_by: string;
+        updated_by: string;
+    };
+}) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: `${isView ? 'Mostrar' : isEdit ? 'Editar' : 'Crear'} Producto`,
             href: route('productos.create'),
         },
     ];
+    console.log(modifications);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         nombre: producto?.nombre ?? '',
@@ -68,6 +82,7 @@ export default function ProductosForm({ producto, isView, isEdit }: { producto: 
     };
 
     const formFieldsDisabled = isView || processing;
+    console.log(data);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -84,7 +99,15 @@ export default function ProductosForm({ producto, isView, isEdit }: { producto: 
                 </div>
                 <Card>
                     <CardHeader>
-                        <CardTitle>{breadcrumbs[0].title}</CardTitle>
+                        <CardTitle className="relative">
+                            {breadcrumbs[0].title}
+                            {modifications && (
+                                <div className="absolute -top-0.5 right-0 flex flex-row gap-2">
+                                    <span className="text-xs text-gray-500">Creado por: {modifications.created_by}</span>
+                                    <span className="pl-2 text-xs text-gray-500"> Modificado por: {modifications.updated_by}</span>
+                                </div>
+                            )}
+                        </CardTitle>
                         <CardContent>
                             <form onSubmit={submit} className="flex flex-col gap-4 pt-4" autoComplete="off">
                                 <div className="grid grid-cols-2 gap-6">

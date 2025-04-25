@@ -30,8 +30,14 @@ class Productos extends Model
         'resistencia_uv',
         'uso_recomendado',
         'activo',
-        'file',
+        'image1',
+        'image2',
+        'image3',
+        'image4',
+        'image5',
         'created_at',
+        'created_by',
         'updated_at',
+        'updated_by',
     ];
 }

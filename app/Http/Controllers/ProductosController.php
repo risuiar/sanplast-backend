@@ -8,6 +8,8 @@ use Inertia\Inertia;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests\ProductosFormRequest;
+use Illuminate\Support\Facades\DB;
+use Auth;
 
 class ProductosController extends Controller
 {
@@ -102,7 +104,8 @@ class ProductosController extends Controller
                 'resistencia_uv' => $request->resistencia_uv,
                 'uso_recomendado' => $request->uso_recomendado,
                 'activo' => $request->activo,
-                'file' => $producto_file,
+                'image1' => $producto_file,
+                'created_by' => auth()->user()->id,
             ]);
 
             if ($productos) {
@@ -120,9 +123,20 @@ class ProductosController extends Controller
      */
     public function show(Productos $producto)
     {
+        $created_by = DB::table('users')->where('id', $producto->created_by)->first();
+        $updated_by = DB::table('users')->where('id', $producto->updated_by)->first();
+        $modifications = [];
+        if ($producto->created_by) {
+            $modifications += ['created_by' => $created_by->name];
+        }
+        if ($producto->updated_by) {
+            $modifications += ['updated_by' => $updated_by->name];
+        }
+
         return Inertia::render('productos/productos-form', [
             'producto' => $producto,
             'isView'  => true,
+            'modifications' => $modifications,
         ]);
     }
 
@@ -131,9 +145,19 @@ class ProductosController extends Controller
      */
     public function edit(Productos $producto)
     {
+        $created_by = DB::table('users')->where('id', $producto->created_by)->first();
+        $updated_by = DB::table('users')->where('id', $producto->updated_by)->first();
+        $modifications = [];
+        if ($producto->created_by) {
+            $modifications += ['created_by' => $created_by->name];
+        }
+        if ($producto->updated_by) {
+            $modifications += ['updated_by' => $updated_by->name];
+        }
         return Inertia::render('productos/productos-form', [
             'producto' => $producto,
             'isEdit'  => true,
+            'modifications' => $modifications,
         ]);
     }
 
@@ -167,6 +191,7 @@ class ProductosController extends Controller
                 $producto->resistencia_uv = $request->resistencia_uv;
                 $producto->uso_recomendado = $request->uso_recomendado;
                 $producto->activo = $request->activo;
+                $producto->updated_by = auth()->user()->id;
                 if ($request->file('file')) {
                     $file = $request->file('file');
                     $producto->file = $file->store('productos', 'public');
