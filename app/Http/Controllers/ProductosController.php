@@ -28,7 +28,11 @@ class ProductosController extends Controller
             'capacidad_litros' => $producto->capacidad_litros,
             'color'         => $producto->color,
             'stock'         => $producto->stock,
-            'file'          => $producto->file,
+            'image1'          => $producto->image1,
+            'image2'          => $producto->image2,
+            'image3'          => $producto->image3,
+            'image4'          => $producto->image4,
+            'image5'          => $producto->image5,
             'activo'        => $producto->activo,
             'created_at'    => $producto->created_at->format('d/m/Y'),
         ]);
@@ -71,15 +75,16 @@ class ProductosController extends Controller
      */
     public function store(ProductosFormRequest $request)
     {
-        try {
-            $producto_file = null;
-            $filename = null;
-
-            if ($request->hasFile('file')) {
-                $file = $request->file('file');
-                $filename = $file->getClientOriginalName();
-                $producto_file = $file->store('productos', 'public');
+        function saveCreateImage($image, $request)
+        {
+            if ($request->file($image)) {
+                $imageName = $request->file($image)->hashName();
+                $request->file($image)->store('productos', 'public');
+                return $imageName;
             }
+            return null;
+        }
+        try {
             $productos = Productos::create([
                 'nombre' => $request->nombre,
                 'modelo' => $request->modelo,
@@ -104,7 +109,11 @@ class ProductosController extends Controller
                 'resistencia_uv' => $request->resistencia_uv,
                 'uso_recomendado' => $request->uso_recomendado,
                 'activo' => $request->activo,
-                'image1' => $producto_file,
+                'image1' => saveCreateImage('image1', $request),
+                'image2' => saveCreateImage('image2', $request),
+                'image3' => saveCreateImage('image3', $request),
+                'image4' => saveCreateImage('image4', $request),
+                'image5' => saveCreateImage('image5', $request),
                 'created_by' => auth()->user()->id,
             ]);
 
@@ -161,11 +170,18 @@ class ProductosController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(ProductosFormRequest $request, Productos $producto)
     {
+        function saveImage($image, $request, $originalImage)
+        {
+            if ($request->file($image)) {
+                $imageName = $request->file($image)->hashName();
+                $request->file($image)->store('productos', 'public');
+                return $imageName;
+            }
+            return $originalImage;
+        }
+
         try {
             if ($producto) {
                 $producto->nombre = $request->nombre;
@@ -192,10 +208,12 @@ class ProductosController extends Controller
                 $producto->uso_recomendado = $request->uso_recomendado;
                 $producto->activo = $request->activo;
                 $producto->updated_by = auth()->user()->id;
-                if ($request->file('file')) {
-                    $file = $request->file('file');
-                    $producto->file = $file->store('productos', 'public');
-                }
+                $producto->image1 = saveImage('image1', $request, $producto->image1);
+                $producto->image2 = saveImage('image2', $request, $producto->image2);
+                $producto->image3 = saveImage('image3', $request, $producto->image3);
+                $producto->image4 = saveImage('image4', $request, $producto->image4);
+                $producto->image5 = saveImage('image5', $request, $producto->image5);
+
                 $producto->save();
                 return redirect()->route('productos.index')->with('success', 'Producto actualizado exitosamente.');
             }
@@ -203,6 +221,30 @@ class ProductosController extends Controller
             } catch (Exception $e) {
                 Log::error('Product update failed: ' . $e->getMessage());
             }
+    }
+
+      /**
+     * Delete image.
+     */
+    public function deleteimage($id, $imagename, $imageid)
+    {
+       try {
+            if ($imagename) {
+                    $path = public_path('images/productos/' . $imagename);
+                    if (file_exists($path)) {
+                        unlink($path);
+                    }
+                    Productos::where('id', $id)->update([
+                        $imageid => null,
+                        'updated_by' => auth()->user()->id,
+                        'updated_at' => now(),
+                    ]);
+                    return redirect()->back()->with('success', 'Imagen eliminada exitosamente.');
+            }
+            return redirect()->back()->with('error', 'Error al eliminar la imagen.');
+        } catch (Exception $e) {
+            Log::error('Product update failed: ' . $e->getMessage());
+        }
     }
 
     /**

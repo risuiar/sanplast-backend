@@ -23,7 +23,11 @@ export interface Producto {
     resistencia_uv?: number;
     uso_recomendado?: string;
     activo: boolean;
-    file?: string;
+    image1?: string;
+    image2?: string;
+    image3?: string;
+    image4?: string;
+    image5?: string;
     created_at: string;
     updated_at: string;
 }

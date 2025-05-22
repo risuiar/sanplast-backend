@@ -16,6 +16,8 @@ class ProductosFormRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+    private const IMAGE_VALIDATION_RULE = 'nullable|file|mimes:jpg,jpeg,png|max:2048';
+
     public function rules(): array
     {
         return [
@@ -42,11 +44,11 @@ class ProductosFormRequest extends FormRequest
             'resistencia_uv' => 'numeric|min:0',
             'uso_recomendado' => 'max:255',
             'activo' => 'boolean',
-            'image1' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-            'image2' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-            'image3' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-            'image4' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
-            'image5' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
+            'image1' => self::IMAGE_VALIDATION_RULE,
+            'image2' => self::IMAGE_VALIDATION_RULE,
+            'image3' => self::IMAGE_VALIDATION_RULE,
+            'image4' => self::IMAGE_VALIDATION_RULE,
+            'image5' => self::IMAGE_VALIDATION_RULE,
         ];
     }
 
@@ -100,9 +102,21 @@ class ProductosFormRequest extends FormRequest
             'uso_recomendado.string' => 'El campo presion maxima bar debe ser un número.',
             'uso_recomendado.max' => 'El campo uso recomendado no puede tener más de 255 caracteres.',
             'activo.boolean' => 'El campo activo debe ser verdadero o falso.',
-            'file.file' => 'El campo file debe ser un archivo.',
-            'file.mimes' => 'El campo file debe ser una imagen (jpg, jpeg, png).',
-            'file.max' => 'El campo file no puede exceder los 2MB.',
+            'image1.file' => 'El campo file debe ser un archivo.',
+            'image1.mimes' => 'El campo file debe ser una imagen (jpg, jpeg, png).',
+            'image1.max' => 'El campo file no puede exceder los 2MB.',
+            'image2.file' => 'El campo file debe ser un archivo.',
+            'image2.mimes' => 'El campo file debe ser una imagen (jpg, jpeg, png).',
+            'image2.max' => 'El campo file no puede exceder los 2MB.',
+            'image3.file' => 'El campo file debe ser un archivo.',
+            'image3.mimes' => 'El campo file debe ser una imagen (jpg, jpeg, png).',
+            'image3.max' => 'El campo file no puede exceder los 2MB.',
+            'image4.file' => 'El campo file debe ser un archivo.',
+            'image4.mimes' => 'El campo file debe ser una imagen (jpg, jpeg, png).',
+            'image4.max' => 'El campo file no puede exceder los 2MB.',
+            'image5.file' => 'El campo file debe ser un archivo.',
+            'image5.mimes' => 'El campo file debe ser una imagen (jpg, jpeg, png).',
+            'image5.max' => 'El campo file no puede exceder los 2MB.',
         ];
     }
 

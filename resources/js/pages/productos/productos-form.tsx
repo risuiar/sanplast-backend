@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ArrowLeft, LoaderCircle } from 'lucide-react';
+import { ArrowLeft, ImageUp, LoaderCircle, Trash2 } from 'lucide-react';
 import { Producto } from './types';
 
 export default function ProductosForm({
@@ -31,9 +31,8 @@ export default function ProductosForm({
             href: route('productos.create'),
         },
     ];
-    console.log(modifications);
 
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, get } = useForm({
         nombre: producto?.nombre ?? '',
         modelo: producto?.modelo ?? '',
         descripcion: producto?.descripcion ?? '',
@@ -57,10 +56,24 @@ export default function ProductosForm({
         certificaciones: producto?.certificaciones ?? '',
         uso_recomendado: producto?.uso_recomendado ?? '',
         activo: producto?.activo ?? false,
-        file: null as File | null,
+        image1: null as File | null,
+        image2: null as File | null,
+        image3: null as File | null,
+        image4: null as File | null,
+        image5: null as File | null,
         _method: isEdit ? 'PUT' : 'POST',
     });
-    console.log(data);
+    const handleDeleteImage = (e: React.MouseEvent<SVGSVGElement>) => {
+        e.preventDefault();
+        const imageid = (e.target as SVGSVGElement).getAttribute('name');
+        const imagename = producto[imageid as keyof Producto];
+        if (imageid) {
+            get(route('productos.deleteimage', { id: producto.id, imagename, imageid }), {
+                forceFormData: true,
+                onSuccess: () => reset(),
+            });
+        }
+    };
     const submit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (isEdit) {
@@ -76,13 +89,12 @@ export default function ProductosForm({
     };
 
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
         if (e.target.files && e.target.files.length > 0) {
-            setData('file', e.target.files[0]);
+            setData(e.target.name as keyof typeof data, e.target.files[0]);
         }
     };
-
     const formFieldsDisabled = isView || processing;
-    console.log(data);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -103,8 +115,13 @@ export default function ProductosForm({
                             {breadcrumbs[0].title}
                             {modifications && (
                                 <div className="absolute -top-0.5 right-0 flex flex-row gap-2">
-                                    <span className="text-xs text-gray-500">Creado por: {modifications.created_by}</span>
-                                    <span className="pl-2 text-xs text-gray-500"> Modificado por: {modifications.updated_by}</span>
+                                    <span className="text-xs text-gray-500" title={producto.created_at}>
+                                        Creado por: {modifications.created_by}
+                                    </span>
+                                    <span className="pl-2 text-xs text-gray-500" title={producto.updated_at}>
+                                        {' '}
+                                        Modificado por: {modifications.updated_by}
+                                    </span>
                                 </div>
                             )}
                         </CardTitle>
@@ -120,7 +137,6 @@ export default function ProductosForm({
                                             name="nombre"
                                             type="text"
                                             placeholder="Nombre del producto"
-                                            autoFocus
                                             tabIndex={0}
                                             disabled={formFieldsDisabled}
                                         />
@@ -134,7 +150,6 @@ export default function ProductosForm({
                                             id="modelo"
                                             name="modelo"
                                             placeholder="Modelo del producto"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.modelo} />
@@ -148,7 +163,6 @@ export default function ProductosForm({
                                         id="descripcion"
                                         name="descripcion"
                                         placeholder="Descripción del producto"
-                                        autoFocus
                                         disabled={formFieldsDisabled}
                                     />
                                     <InputError message={errors.descripcion} />
@@ -163,7 +177,6 @@ export default function ProductosForm({
                                                 id="capacidad_litros"
                                                 name="capacidad_litros"
                                                 placeholder="Capacidad litros"
-                                                autoFocus
                                                 disabled={formFieldsDisabled}
                                             />
                                             <InputError message={errors.capacidad_litros} />
@@ -176,7 +189,6 @@ export default function ProductosForm({
                                                 id="altura_cm"
                                                 name="altura_cm"
                                                 placeholder="Altura CM"
-                                                autoFocus
                                                 disabled={formFieldsDisabled}
                                             />
                                             <InputError message={errors.altura_cm} />
@@ -189,7 +201,6 @@ export default function ProductosForm({
                                                 id="diametro_cm"
                                                 name="diametro_cm"
                                                 placeholder="Diametro CM"
-                                                autoFocus
                                                 disabled={formFieldsDisabled}
                                             />
                                             <InputError message={errors.diametro_cm} />
@@ -202,37 +213,65 @@ export default function ProductosForm({
                                                 id="material"
                                                 name="material"
                                                 placeholder="Material"
-                                                autoFocus
                                                 disabled={formFieldsDisabled}
                                             />
                                             <InputError message={errors.material} />
                                         </div>
                                     </div>
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="file">Imagen</Label>
-                                        {!isView && (
-                                            <>
-                                                <Input
-                                                    onChange={handleFileUpload}
-                                                    id="file"
-                                                    name="file"
-                                                    type="file"
-                                                    autoFocus
-                                                    disabled={formFieldsDisabled}
-                                                />
-                                                <InputError message={errors.file} />
-                                            </>
-                                        )}
-                                        {producto?.file && (isView || isEdit) && (
-                                            <div className="grid gap-2">
-                                                <Label htmlFor="featured_image">Imagen actual</Label>
-                                                <img
-                                                    src={`/storage/${producto.file}`}
-                                                    alt={producto.nombre}
-                                                    className="h-40 w-50 rounded-lg border object-contain"
-                                                />
-                                            </div>
-                                        )}
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {Array.from(Array(5).keys()).map((index) => {
+                                            const currentImage = `image${index + 1}`;
+                                            return (
+                                                <div key={index} className="grid gap-2">
+                                                    <div className="flex items-center self-start">
+                                                        <Label className="flex capitalize">{currentImage}</Label>
+                                                        {(isEdit || !isView) && (
+                                                            <>
+                                                                <label htmlFor={currentImage}>
+                                                                    <ImageUp className="ml-2 cursor-pointer" />
+                                                                </label>
+                                                                {producto?.[currentImage as keyof Producto] && (
+                                                                    <Trash2
+                                                                        name={currentImage}
+                                                                        onClick={handleDeleteImage}
+                                                                        className="ml-2 cursor-pointer"
+                                                                    />
+                                                                )}
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                    {!isView && (
+                                                        <>
+                                                            <Input
+                                                                onChange={handleFileUpload}
+                                                                id={currentImage}
+                                                                name={currentImage}
+                                                                type="file"
+                                                                disabled={formFieldsDisabled}
+                                                                className="hidden"
+                                                            />
+                                                            <InputError message={errors[currentImage as keyof typeof errors]} />
+                                                            {data?.[currentImage as keyof typeof data] && (
+                                                                <img
+                                                                    src={URL.createObjectURL(data?.[currentImage as keyof typeof data] as File)}
+                                                                    alt={currentImage}
+                                                                    className="h-40 w-50 border object-contain"
+                                                                />
+                                                            )}
+                                                        </>
+                                                    )}
+                                                    {producto?.[currentImage as keyof Producto] && (isView || isEdit) && (
+                                                        <div className="grid gap-2">
+                                                            <img
+                                                                src={`/images/productos/${producto[currentImage as keyof Producto]}`}
+                                                                alt={producto.nombre}
+                                                                className="h-40 w-50 rounded-lg border object-contain"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-6">
@@ -244,7 +283,6 @@ export default function ProductosForm({
                                             id="color"
                                             name="color"
                                             placeholder="Color"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.color} />
@@ -257,7 +295,6 @@ export default function ProductosForm({
                                             id="precio_venta"
                                             name="precio_venta"
                                             placeholder="Precio Venta"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.precio_venta} />
@@ -272,7 +309,6 @@ export default function ProductosForm({
                                             id="costo_fabricacion"
                                             name="costo_fabricacion"
                                             placeholder="Costo Fabricacion"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.costo_fabricacion} />
@@ -285,7 +321,6 @@ export default function ProductosForm({
                                             id="stock"
                                             name="stock"
                                             placeholder="Stock"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.stock} />
@@ -300,7 +335,6 @@ export default function ProductosForm({
                                             id="peso_kg"
                                             name="peso_kg"
                                             placeholder="Peso KG"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.peso_kg} />
@@ -313,7 +347,6 @@ export default function ProductosForm({
                                             id="presion_maxima_bar"
                                             name="presion_maxima_bar"
                                             placeholder="Presion Maxima Bar"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.presion_maxima_bar} />
@@ -328,7 +361,6 @@ export default function ProductosForm({
                                             id="espesor_pared_mm"
                                             name="espesor_pared_mm"
                                             placeholder="Espesor Pared MM"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.espesor_pared_mm} />
@@ -341,7 +373,6 @@ export default function ProductosForm({
                                             id="revestimiento_interno"
                                             name="revestimiento_interno"
                                             placeholder="Revestimiento Interno"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.revestimiento_interno} />
@@ -356,7 +387,6 @@ export default function ProductosForm({
                                             id="garantia_anios"
                                             name="garantia_anios"
                                             placeholder="Garantia años"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.garantia_anios} />
@@ -369,7 +399,6 @@ export default function ProductosForm({
                                             id="temperatura_maxima_c"
                                             name="temperatura_maxima_c"
                                             placeholder="Temperatura Maxima C°"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.temperatura_maxima_c} />
@@ -384,7 +413,6 @@ export default function ProductosForm({
                                             id="tipo_instalacion"
                                             name="tipo_instalacion"
                                             placeholder="Tipo instalacion"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.tipo_instalacion} />
@@ -397,7 +425,6 @@ export default function ProductosForm({
                                             id="conexiones_incluidas"
                                             name="conexiones_incluidas"
                                             placeholder="Conexiones incluidas"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.conexiones_incluidas} />
@@ -412,7 +439,6 @@ export default function ProductosForm({
                                             id="certificaciones"
                                             name="certificaciones"
                                             placeholder="Certificaciones"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.certificaciones} />
@@ -425,7 +451,6 @@ export default function ProductosForm({
                                             id="resistencia_uv"
                                             name="resistencia_uv"
                                             placeholder="Resistencia UV"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.resistencia_uv} />
@@ -440,7 +465,6 @@ export default function ProductosForm({
                                             id="uso_recomendado"
                                             name="uso_recomendado"
                                             placeholder="Uso recomendado"
-                                            autoFocus
                                             disabled={formFieldsDisabled}
                                         />
                                         <InputError message={errors.uso_recomendado} />

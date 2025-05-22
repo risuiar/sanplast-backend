@@ -1,10 +1,9 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Check, CirclePlusIcon, Eye, Pencil, Trash2 } from 'lucide-react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { Check, CirclePlusIcon, Eye, Pencil } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { IndexProps } from './types';
 
@@ -80,9 +79,9 @@ export default function Index({ productos }: IndexProps) {
                                         <TableCell>{product.modelo}</TableCell>
                                         <TableCell>{product.capacidad_litros}</TableCell>
                                         <TableCell>
-                                            {product.file && (
+                                            {product.image1 && (
                                                 <img
-                                                    src={`/storage/${product.file}`}
+                                                    src={`/images/productos/${product.image1}`}
                                                     alt={product.nombre}
                                                     className="h-16 w-20 rounded-lg object-contain"
                                                 />
@@ -108,7 +107,7 @@ export default function Index({ productos }: IndexProps) {
                                                 <Pencil size={18} />
                                             </Link>
 
-                                            <Button
+                                            {/* <Button
                                                 className="ms-2 cursor-pointer rounded-lg bg-red-600 p-2 text-white hover:opacity-90"
                                                 onClick={() => {
                                                     if (confirm('Are you sure you want to delete this product?')) {
@@ -119,7 +118,7 @@ export default function Index({ productos }: IndexProps) {
                                                 }}
                                             >
                                                 <Trash2 size={18} />{' '}
-                                            </Button>
+                                            </Button> */}
                                         </TableCell>
                                     </TableRow>
                                 );

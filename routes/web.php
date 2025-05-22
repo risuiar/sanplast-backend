@@ -10,6 +10,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+    Route::get('/productos/deleteimage/{id}/{imagename}/{imageid}', [ProductosController::class, 'deleteimage'])->name('productos.deleteimage');
     Route::resource('productos', ProductosController::class);
 });
 
