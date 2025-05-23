@@ -106,19 +106,6 @@ export default function Index({ productos }: IndexProps) {
                                             >
                                                 <Pencil size={18} />
                                             </Link>
-
-                                            {/* <Button
-                                                className="ms-2 cursor-pointer rounded-lg bg-red-600 p-2 text-white hover:opacity-90"
-                                                onClick={() => {
-                                                    if (confirm('Are you sure you want to delete this product?')) {
-                                                        router.delete(route('productos.destroy', product.id), {
-                                                            preserveScroll: true,
-                                                        });
-                                                    }
-                                                }}
-                                            >
-                                                <Trash2 size={18} />{' '}
-                                            </Button> */}
                                         </TableCell>
                                     </TableRow>
                                 );
