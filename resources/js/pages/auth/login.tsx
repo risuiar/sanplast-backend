@@ -95,12 +95,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         Ingresar
                     </Button>
                 </div>
-
-                <div className="text-muted-foreground text-center text-sm">
-                    <TextLink href={route('register')} tabIndex={5}>
-                        Registrarme
-                    </TextLink>
-                </div>
             </form>
 
             {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}

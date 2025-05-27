@@ -10,16 +10,20 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Requests\ProductosFormRequest;
 use Illuminate\Support\Facades\DB;
 use Auth;
+use Illuminate\Support\Facades\Cache;
 
 class ProductosApiController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-        return Productos::all();
-    }
+ public function index()
+{
+    return Cache::remember('productos_activos', 60, function () {
+        return Productos::where('activo', true)->orderBy('nombre')->get();
+    });
+
+}
 
     /**
      * Display the specified resource.
