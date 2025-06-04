@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
@@ -33,6 +34,7 @@ export default function ProductosForm({
     ];
 
     const { data, setData, post, processing, errors, reset, get } = useForm({
+        tipo: producto?.tipo ?? 'tanque',
         nombre: producto?.nombre ?? '',
         modelo: producto?.modelo ?? '',
         descripcion: producto?.descripcion ?? '',
@@ -56,6 +58,7 @@ export default function ProductosForm({
         certificaciones: producto?.certificaciones ?? '',
         uso_recomendado: producto?.uso_recomendado ?? '',
         activo: producto?.activo ?? false,
+        destacado: producto?.destacado ?? false,
         image1: null as File | null,
         image2: null as File | null,
         image3: null as File | null,
@@ -127,6 +130,21 @@ export default function ProductosForm({
                         </CardTitle>
                         <CardContent>
                             <form onSubmit={submit} className="flex flex-col gap-4 pt-4" autoComplete="off">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="nombre">Categoría</Label>
+                                    <Select value={data.tipo} onValueChange={(value) => setData('tipo', value as 'tanque' | 'cano' | 'accesorio')}>
+                                        <SelectTrigger className="w-[180px]">
+                                            <SelectValue placeholder="Tanque" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectItem value="tanque">Tanque</SelectItem>
+                                                <SelectItem value="cano">Caño</SelectItem>
+                                                <SelectItem value="accesorio">Accesorio</SelectItem>
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                                 <div className="grid grid-cols-2 gap-6">
                                     <div className="grid gap-2">
                                         <Label htmlFor="nombre">Nombre</Label>
@@ -470,9 +488,17 @@ export default function ProductosForm({
                                         <InputError message={errors.uso_recomendado} />
                                     </div>
                                     <div>
-                                        <Label htmlFor="activo">Activo</Label>
                                         <div>
                                             <Switch id="activo" checked={data.activo} onCheckedChange={(e) => setData('activo', e)} />
+                                            <Label htmlFor="activo" className="pl-2">
+                                                Activo
+                                            </Label>
+                                        </div>
+                                        <div>
+                                            <Switch id="destacado" checked={data.destacado} onCheckedChange={(e) => setData('destacado', e)} />
+                                            <Label htmlFor="destacado" className="pl-2">
+                                                Destacado
+                                            </Label>
                                         </div>
                                     </div>
                                 </div>

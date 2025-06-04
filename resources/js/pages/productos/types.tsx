@@ -1,5 +1,6 @@
 export interface Producto {
     id: number;
+    tipo: 'tanque' | 'cano' | 'accesorio';
     nombre: string;
     modelo?: string;
     descripcion?: string;
@@ -23,6 +24,7 @@ export interface Producto {
     resistencia_uv?: number;
     uso_recomendado?: string;
     activo: boolean;
+    destacado: boolean;
     image1?: string;
     image2?: string;
     image3?: string;

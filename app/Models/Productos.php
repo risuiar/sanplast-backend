@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Productos extends Model
 {
     protected $fillable = [
+        'tipo',
         'nombre',
         'modelo',
         'descripcion',
@@ -30,6 +31,7 @@ class Productos extends Model
         'resistencia_uv',
         'uso_recomendado',
         'activo',
+        'destacado',
         'image1',
         'image2',
         'image3',

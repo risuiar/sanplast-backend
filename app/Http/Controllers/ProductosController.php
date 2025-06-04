@@ -87,6 +87,7 @@ class ProductosController extends Controller
         }
         try {
             $productos = Productos::create([
+                'tipo' => $request->tipo,
                 'nombre' => $request->nombre,
                 'modelo' => $request->modelo,
                 'descripcion' => $request->descripcion,
@@ -110,6 +111,7 @@ class ProductosController extends Controller
                 'resistencia_uv' => $request->resistencia_uv,
                 'uso_recomendado' => $request->uso_recomendado,
                 'activo' => $request->activo,
+                'destacado' => $request->destacado,
                 'image1' => saveCreateImage('image1', $request),
                 'image2' => saveCreateImage('image2', $request),
                 'image3' => saveCreateImage('image3', $request),
@@ -119,13 +121,14 @@ class ProductosController extends Controller
             ]);
 
             if ($productos) {
-                return redirect()->route('productos.index')->with('success', 'Producto creado exitosamente.');
+                return redirect()->route('productos.index', ['tipo' => $request->tipo])->with('success', 'Producto creado exitosamente.');
             }
             return redirect()->back()->with('error', 'Error al crear el producto.');
 
-            } catch (Exception $e) {
-                    Log::error('Error al crear el producto: ' . $e->getMessage());
-                }
+        } catch (Exception $e) {
+            Log::error('Error al crear el producto: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al crear el producto: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -185,6 +188,7 @@ class ProductosController extends Controller
 
         try {
             if ($producto) {
+                $producto->tipo = $request->tipo;
                 $producto->nombre = $request->nombre;
                 $producto->modelo = $request->modelo;
                 $producto->descripcion = $request->descripcion;
@@ -208,6 +212,7 @@ class ProductosController extends Controller
                 $producto->resistencia_uv = $request->resistencia_uv;
                 $producto->uso_recomendado = $request->uso_recomendado;
                 $producto->activo = $request->activo;
+                $producto->destacado = $request->destacado;
                 $producto->updated_by = auth()->user()->id;
                 $producto->image1 = saveImage('image1', $request, $producto->image1);
                 $producto->image2 = saveImage('image2', $request, $producto->image2);
@@ -216,12 +221,13 @@ class ProductosController extends Controller
                 $producto->image5 = saveImage('image5', $request, $producto->image5);
 
                 $producto->save();
-                return redirect()->route('productos.index')->with('success', 'Producto actualizado exitosamente.');
+                return redirect()->route('productos.index', ['tipo' => $request->tipo])->with('success', 'Producto actualizado exitosamente.');
             }
             return redirect()->back()->with('error', 'Error al actualizar el producto.');
-            } catch (Exception $e) {
-                Log::error('Product update failed: ' . $e->getMessage());
-            }
+        } catch (Exception $e) {
+            Log::error('Product update failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error al actualizar el producto: ' . $e->getMessage());
+        }
     }
 
       /**
@@ -254,8 +260,9 @@ class ProductosController extends Controller
     public function destroy(Productos $producto)
     {
         if ($producto) {
+            $tipo = $producto->tipo;
             $producto->delete();
-            return redirect()->route('productos.index')->with('success', 'Producto eliminado exitosamente.');
+            return redirect()->route('productos.index', ['tipo' => $tipo])->with('success', 'Producto eliminado exitosamente.');
         } else {
             return redirect()->back()->with('error', 'Error al eliminar el producto.');
         }

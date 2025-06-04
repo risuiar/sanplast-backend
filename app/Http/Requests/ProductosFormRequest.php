@@ -21,6 +21,7 @@ class ProductosFormRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'tipo' => 'required|in:tanque,cano,accesorio',
             'nombre' => 'required|max:255',
             'modelo' => 'max:255',
             'descripcion' => 'max:1000',
