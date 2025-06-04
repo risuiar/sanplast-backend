@@ -11,7 +11,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
     Route::get('/productos/deleteimage/{id}/{imagename}/{imageid}', [ProductosController::class, 'deleteimage'])->name('productos.deleteimage');
-    Route::resource('productos', ProductosController::class);
+
+    Route::get('/productos/categoria/{tipo?}', [ProductosController::class, 'index'])
+        ->where('tipo', '.*')
+        ->defaults('tipo', 'tanque')
+        ->name('productos.index');
+    Route::resource('productos', ProductosController::class)
+        ->except(['index']);
 });
 
 require __DIR__.'/settings.php';

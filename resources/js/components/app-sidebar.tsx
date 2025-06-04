@@ -15,7 +15,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Productos',
-        href: '/productos',
+        href: '/productos/categoria/tanque',
         icon: Cylinder,
     },
 ];

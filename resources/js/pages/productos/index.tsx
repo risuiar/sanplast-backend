@@ -14,7 +14,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 // , filters, totalCount, filteredCount
-export default function Index({ productos }: IndexProps) {
+export default function Index({ productos, tipo }: IndexProps & { tipo: string }) {
     const { flash } = usePage<{ flash?: { success?: string; error?: string } }>().props;
     const flashMessage = flash?.success ?? flash?.error;
     const [showAlert, setShowAlert] = useState(!!(flash?.success ?? flash?.error));
@@ -26,7 +26,7 @@ export default function Index({ productos }: IndexProps) {
             return () => clearTimeout(timer);
         }
     }, [flashMessage]);
-
+    console.log(tipo);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Productos" />
@@ -43,7 +43,30 @@ export default function Index({ productos }: IndexProps) {
                     </Alert>
                 )}
 
-                <div className="ml-auto">
+                <div className="flex justify-between gap-4">
+                    <div className="flex gap-4">
+                        <Link
+                            className={`${tipo === 'tanque' ? 'bg-sanplast' : 'bg-sanplast/50'} flex cursor-pointer items-center rounded-lg px-4 py-2 text-sm text-white hover:opacity-90`}
+                            href={route('productos.index', { tipo: 'tanque' })}
+                            as="button"
+                        >
+                            Tanques
+                        </Link>
+                        <Link
+                            className={`${tipo === 'cano' ? 'bg-sanplast' : 'bg-sanplast/50'} flex cursor-pointer items-center rounded-lg px-4 py-2 text-sm text-white hover:opacity-90`}
+                            href={route('productos.index', { tipo: 'cano' })}
+                            as="button"
+                        >
+                            Caños
+                        </Link>
+                        <Link
+                            className={`${tipo === 'accesorio' ? 'bg-sanplast' : 'bg-sanplast/50'} flex cursor-pointer items-center rounded-lg px-4 py-2 text-sm text-white hover:opacity-90`}
+                            href={route('productos.index', { tipo: 'accesorio' })}
+                            as="button"
+                        >
+                            Accesorios
+                        </Link>
+                    </div>
                     <Link
                         className="bg-sanplast flex cursor-pointer items-center rounded-lg px-4 py-2 text-sm text-white hover:opacity-90"
                         href={route('productos.create')}

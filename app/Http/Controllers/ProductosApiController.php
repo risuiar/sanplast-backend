@@ -17,13 +17,17 @@ class ProductosApiController extends Controller
     /**
      * Display a listing of the resource.
      */
- public function index()
-{
-    return Cache::remember('productos_activos', 60, function () {
-        return Productos::where('activo', true)->orderBy('nombre')->get();
-    });
+    public function index(Request $request)
+    {
+        $tipo = $request->query('tipo', 'tanque');
 
-}
+        return Cache::remember("productos_activos_{$tipo}", 60, function () use ($tipo) {
+            return Productos::where('activo', true)
+                           ->where('tipo', $tipo)
+                           ->orderBy('nombre')
+                           ->get();
+        });
+    }
 
     /**
      * Display the specified resource.

@@ -16,9 +16,9 @@ class ProductosController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, $tipo)
     {
-        $productsQuery = Productos::query();
+        $productsQuery = Productos::where('tipo', $tipo);
         $totalCount = $productsQuery->count();
 
         $allProducts = $productsQuery->latest()->get()->map(fn($producto) => [
@@ -57,6 +57,7 @@ class ProductosController extends Controller
             'totalCount' => $totalCount,
             'perPage' => 10,
             'currentPage' => 1,
+            'tipo' => $tipo,
         ]);
     }
 
